@@ -1,0 +1,81 @@
+---
+title: "ANA 515 Assignment 2 - Sean Anggani"
+author: "Sean Anggani"
+date: "2023-06-18"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Dataset: https://github.com/fivethirtyeight/data/blob/master/bechdel/movies.csv
+
+Section 1
+	This dataset measures the representation of women in film and other fiction, which is known as the Bechdel test. A movie passes the Bechdel test if they satisfy 3 criterias:
+1. At least 2 named women in the movie
+2. These 2 women have a conversation with each other
+3. The conversation is not about a male character
+
+The data analyzes 1795 movies from 1990 to 2013 and aims to answer what is the ROI when movies have passed the Bechdel test, and also captures other meaningful data such as budget. The file is stored in a CSV that are delimited by commas.
+
+
+Section 2
+```{r}
+library(dplyr)
+library(tidyverse)
+library(knitr)
+library(bslib)
+download.file(url = "https://raw.githubusercontent.com/fivethirtyeight/data/master/bechdel/movies.csv", destfile = "movies.csv")
+movies<-read.csv("movies.csv", stringsAsFactors = FALSE)
+movies_df <- as.data.frame(movies)
+```
+
+Section 3
+```{r}
+clean_movies<-rename(movies, behavior=test)
+new_movies<-filter(movies, year>2010)
+```
+
+Section 4
+This dataframe has 
+```{r} 
+nrow(movies_df)
+```
+rows and
+```{r} 
+ncol(movies_df)
+```
+columns. The names of the columns and a brief description of each are in the table below:
+```{r results = TRUE}
+library(knitr)
+movies_finances <- select(movies_df,budget, domgross, intgross)
+columns_summary <- data.frame(
+Columns = c(colnames(movies_finances)),
+Description = c(
+"Budget of making the movie", "Gross domestic revenue", "Gross international revenue")
+)
+
+kable(columns_summary, caption = "Movies Finances")
+```
+
+Section 5
+```{r}
+movies_df$domgross <- as.integer(movies_df$domgross)
+movies_df$intgross <- as.integer(movies_df$intgross)
+movies_budget <- select(movies_df,budget)
+movies_domgross <- select(movies_df,domgross)
+movies_intgross <- select(movies_df,intgross)
+
+sum_budget<-summary(na.omit(movies_budget))
+sum_domgross<-summary(na.omit(movies_domgross))
+sum_intgross<-summary(na.omit(movies_intgross))
+
+print(sum_budget)
+print(sum_domgross)
+print(sum_intgross)
+```
